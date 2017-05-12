@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+	<Resource id="My_Router"
+		type="org.superbiz.dynamicdatasourcerouting.DeterminedRouter"
+		provider="org.router:DeterminedRouter">
+		DatasourceNames = tenant_a tenant_b
+		DefaultDataSourceName =
+		tenant_b
+	</Resource>
+
+	<Resource id="Routed_Datasource" type="org.apache.openejb.resource.jdbc.router.Router"
+		provider="RoutedDataSource">
+		Router = My_Router
+	</Resource>
+
+	<Resource id="tenant_b" type="DataSource">
+		JdbcDriver =
+		org.postgresql.Driver
+		JdbcUrl =
+		jdbc:postgresql://localhost:5432/tenant_b
+		UserName = tenant
+		Password =
+		tenant
+		JtaManaged = true
+		maxActive=50
+		maxIdle=3
+		maxWait=100000
+		poolPreparedStatements=true
+		maxOpenPreparedStatements=100
+	</Resource>
+
+
+	<Resource id="tenant_a" type="DataSource">
+		JdbcDriver =
+		org.postgresql.Driver
+		JdbcUrl =
+		jdbc:postgresql://localhost:5432/tenant_a
+		UserName = tenant
+		Password =
+		tenant
+		JtaManaged = true
+		maxActive=50
+		maxIdle=3
+		maxWait=100000
+		poolPreparedStatements=true
+		maxOpenPreparedStatements=100
+	</Resource>
+
+
+</resources>

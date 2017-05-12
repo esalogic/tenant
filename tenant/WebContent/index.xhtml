@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+	<title>User Pager</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css" />
+	<div class="login">
+
+		<h:form styleClass="login-container">
+			<h:panelGrid columns="2">
+				<h:commandButton value="Logout" action="#{userBean.logout()}" />
+			</h:panelGrid>
+		</h:form>
+
+		<h:form styleClass="login-container">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Nome Utente:" />
+				<h:outputLabel value="#{userBean.username}" />
+
+				<h:outputLabel value="Tenant:" />
+				<h:outputLabel value="#{userBean.tenant}" />
+			</h:panelGrid>
+		</h:form>
+	</div>
+</h:body>
+</html>

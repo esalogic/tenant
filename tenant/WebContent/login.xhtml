@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css" />
+	<div class="login">
+		<div class="login-triangle"></div>
+		<h2 class="login-header">Login</h2>
+		<h:form prependId="false" styleClass="login-container">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Login" />
+				<h:inputText id="username" required="true"
+					value="#{shiroLoginBean.username}" />
+
+				<h:outputLabel value="Password:" />
+				<h:inputSecret id="password" required="true"
+					value="#{shiroLoginBean.password}" />
+
+				<h:outputLabel value="Select Tenant:" />
+				<h:selectOneMenu id="tenant" value="#{shiroLoginBean.tenant}">
+					<f:selectItem itemLabel="tenant_b" itemValue="tenant_b" />
+					<f:selectItem itemLabel="tenant_a" itemValue="tenant_a" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="Remember me:" />
+				<h:selectBooleanCheckbox id="rememberMe"
+					value="#{shiroLoginBean.rememberMe}" />
+
+				<h:outputText />
+				<h:commandButton value="Login" action="#{shiroLoginBean.doLogin}" />
+			</h:panelGrid>
+
+			<h:messages id="messages" autoUpdate="true" closable="true" />
+		</h:form>
+
+	</div>
+	<script
+		src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+</h:body>
+</html>

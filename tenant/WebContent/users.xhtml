@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+	<title>Insert new User</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css" />
+	<div class="login">
+		<h2>User</h2>
+		<h:form styleClass="login-container">
+			<h:panelGrid columns="2">
+				<h:commandButton value="Logout" action="#{insertUserBean.logout()}" />
+			</h:panelGrid>
+		</h:form>
+
+		<h:form styleClass="login-container">
+			<h:panelGrid columns="2">
+
+				<h:outputLabel value="Nome Utente:" />
+				<h:inputText id="username" value="#{insertUserBean.username}"
+					required="true" />
+
+				<h:outputLabel value="Select role" />
+				<h:selectOneMenu id="tenant" value="#{insertUserBean.user_role}">
+					<f:selectItem itemLabel="admin" itemValue="admin" />
+					<f:selectItem itemLabel="user" itemValue="user" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="Password" />
+				<h:inputSecret id="password" value="#{insertUserBean.password}"
+					required="true" />
+				<h:message for="password" />
+
+				<h:outputText />
+				<h:commandButton value="Add" action="#{insertUserBean.save()}" />
+
+				<h:outputText />
+				<h:messages globalOnly="true" autoUpdate="true" />
+
+			</h:panelGrid>
+		</h:form>
+	</div>
+</h:body>
+</html>
