@@ -25,7 +25,6 @@
 		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
 	</filter>
 
-
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
 		<url-pattern>/*</url-pattern>
