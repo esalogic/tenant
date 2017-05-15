@@ -294,6 +294,9 @@ These are our main modifications:
 **CustomJDBCRealm.java**
 
 ```
+
+...
+
 public class CustomJDBCRealm extends AuthorizingRealm {
 
 
@@ -308,8 +311,6 @@ protected static final String DEFAULT_AUTHENTICATION_QUERY =
  */
 protected static final String DEFAULT_SALTED_AUTHENTICATION_QUERY = 
 	"select password, password_salt from users where username = ? and tenant = ?";
-
-...
 
 /**
  * getPasswordForUser ( -, -, - ) now gets three parameter
