@@ -1,7 +1,25 @@
 # Tenant
 
-Our goal is to implement multi-tenancy using EJB/Shiro/JPA/PostgreSQL.  
-We decided to manage one tenant per DB with separate connections to emprove security access.  
+Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
+Our first intention was to implement multi-tenancy in a tenant-schema pattern.  
+We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create schemas.  
+We decided to manage one tenant per DB.  
+According to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
+> Hibernate do it so if you declare your databases it will work. However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
+
+We decided to manually create DB's and define them in config files.
+
+
+**Pros:**
+* separate connections
+* security access
+* separation of data  
+
+**Cons:**
+* static resource declaration
+* openJPA doesn't accept our object model
+* BootStrapUtility is not working in our environment, we should statically declare all persistence info
+
 
 ## Getting Started
 
@@ -204,7 +222,8 @@ First of all you need to modify web.xml and resources.xml to match your DBs conf
 
 ```
 As you can see we implemented our DataSource access as Routed_Datasource.  
-We istantiate one Router per tenant and dynamically match DataSource by name. More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
+We istantiate one Router per tenant and dynamically match DataSource by name.  
+More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
 
 **DeterminedRouter.java**
 ```
