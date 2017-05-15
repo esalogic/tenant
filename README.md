@@ -1,13 +1,13 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy associating for each tenant a different DBschema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBschema's in same DB.  
-This method should have simplified our management protocol to generate different DBschema's per tenant allowing to manage all the features with a single connection.  
+Our first intention was to implement multi-tenancy associating for each tenant a different DB-schema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DB-schema's in same DB.  
+This method should have simplified our management protocol to generate different DB-schema's per tenant allowing to manage all the features with a single connection.  
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create and manage DBschema's.  
 
 We decided to manage one tenant per DB where each DB contains a table with _<User,Password,Tenant>_ association.  
 We estabilish one different connection per DB.  
-To manage every interaction with a specific DB we implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html). This solution has some benefits but forced us to declare all the components before starting the application.
+We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) to manage every interaction with a specific DB. This solution has some benefits but forced us to know and declare all the components we need to use before starting the application.
 
 **Tenant per DB pattern _Pros & Cons_:**
 
