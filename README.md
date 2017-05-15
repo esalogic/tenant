@@ -568,5 +568,5 @@ This work is a mod of [Dynamic DataSource Routing](https://github.com/apache/tom
 
 ## Authors
 
-* **Umberto Carrara** - *Initial work* - [Esalogic](http://esalogic.it/)
-* **Vincenzo Ciaralli**
+* **Umberto Carrara** - [Esalogic](http://esalogic.it/)
+* **Vincenzo Ciaralli** - GhostWriter
