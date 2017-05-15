@@ -1,7 +1,7 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy associating for each tenant a different DBSchema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, differents DBSchema's in the same DB.  
+Our first intention was to implement multi-tenancy associating for each tenant a different DBSchema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBSchema's in the same DB.  
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create and manage DBschema's.  
 We decided to manage one tenant per DB where in each DB is placed a table containing _<User,Password,Tenant>_ association. We have statically istantiated n different realms (one per DB) so, when the user try a security Shiro access, he is connected to the right DB using that triple. 
 The system lookup in squence all the realms (all DB's) till he get's authenticated with the right one.  
