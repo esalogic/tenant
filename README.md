@@ -5,8 +5,8 @@ Our first intention was to implement multi-tenancy associating for each tenant a
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create schemas.  
 We decided to manage one tenant per DB.  
 
-We faced another problem trying to dynamically create our DB's.
-According to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
+We faced another problem trying to dynamically create our DB's: 
+according to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
 > However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
 
 We decided to manually create DB's before the deplyment and define them in our config files.
