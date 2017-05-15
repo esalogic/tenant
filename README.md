@@ -1,7 +1,7 @@
 # Tenant
 
-Our goal is to implement multi-tenancy using EJB/Shiro/JPA/PostgreSQL.
-We decided to manage one tenant per DB with separate connections to emprove security access.
+Our goal is to implement multi-tenancy using EJB/Shiro/JPA/PostgreSQL.  
+We decided to manage one tenant per DB with separate connections to emprove security access.  
 
 ## Getting Started
 
@@ -16,11 +16,11 @@ To test the project you need:
 
 ### Installing
 
-Open Eclipse and set apache-tomee-plus-7.0.2 as Tomacat v8.5 Server in Project->Properties->Server option.
-Create a new Dynamic Web Project and replace "src" folder in Java Resources and "WebContent" folder in root directory with tenant's one.
-First thing you need to do is to configure your environement (JAVA JDK,JRE and Eclipse). 
-Afther that, you have to open pgAdmin and create two new DB called: tenant_a, tenant_b. 
-For each of them execute queries contained in query.sql placed in JavaResources->src->resources.
+Open Eclipse and set apache-tomee-plus-7.0.2 as Tomacat v8.5 Server in Project->Properties->Server option.  
+Create a new Dynamic Web Project and replace "src" folder in Java Resources and "WebContent" folder in root directory with tenant's one.  
+First thing you need to do is to configure your environement (JAVA JDK,JRE and Eclipse).  
+Afther that, you have to open pgAdmin and create two new DB called: tenant_a, tenant_b.  
+For each of them execute queries contained in query.sql placed in JavaResources->src->resources.  
 You can insert as many users as you want to test our features.
 
 **query.sql**
@@ -86,9 +86,9 @@ VALUES ('user_1', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df
 
 ```
 
-Just replace "tenant_a" with "tenant_b" when u insert users in different DBs.
+Just replace "tenant_a" with "tenant_b" when u insert users in different DBs.  
 
-Now that you have configured two differents DBs you need to modify configuration files.
+Now that you have configured two differents DBs you need to modify configuration files.  
 First of all you need to modify web.xml and resources.xml to match your DBs configuration (check your postgreSQL port). 
 
 **web.xml**
@@ -203,7 +203,8 @@ First of all you need to modify web.xml and resources.xml to match your DBs conf
 </resources>
 
 ```
-As you can see we implemented our DataSource access as Routed_Datasource. We istantiate one Router per tenant and dynamically match DataSource by name. More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
+As you can see we implemented our DataSource access as Routed_Datasource.  
+We istantiate one Router per tenant and dynamically match DataSource by name. More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
 
 **DeterminedRouter.java**
 ```
@@ -235,7 +236,7 @@ public DataSource getDataSource() {
 }
 ```
 
-The core of our architecture is to give the chance to match users in different databases using Shiro security framework and JPA in EJB context. To do this we needed to access with a Triple <Username, Password, Tenant_Name> bypassing custom Shiro's Realm-Token protocol to fit our one.
+The core of our architecture is to give the chance to match users in different databases using Shiro security framework and JPA in EJB context. To do this we needed to access with a Triple <Username, Password, Tenant_Name> bypassing custom Shiro's Realm-Token protocol to fit our one.  
 First of all we extended AuthenticationToken class to get Tenant_Name as parameter.
 
 **CustomAuthenticationToken.java**
@@ -260,8 +261,9 @@ public class CustomAuthenticationToken implements HostAuthenticationToken, Remem
 }
 ```
 
-After that we extended JDBCRealm class to permit to login with our Triple <Username, Password, Tenant>.
-We wanted to have DEFAULT query setted in the class. You can decide to write your own queries in shiro.ini configuration file as jdbcRealm.authenticationQuery=YOUR_QUERY and jdbcRealm.userRolesQuery=YOUR_QUERY properties.
+After that we extended JDBCRealm class to permit to login with our Triple <Username, Password, Tenant>.  
+We wanted to have DEFAULT query setted in the class.  
+You can decide to write your own queries in shiro.ini configuration file as jdbcRealm.authenticationQuery=YOUR_QUERY and jdbcRealm.userRolesQuery=YOUR_QUERY properties.  
 These are our main modifications:
 
 **CustomJDBCRealm.java**
@@ -419,7 +421,7 @@ private String[] getPasswordForUser(Connection conn, String username, String ten
 
 ```
 
-Now it remains to configure Shiro and implement a new login politics.
+Now it remains to configure Shiro and implement a new login politics.  
 You can see how we configure Shiro by checking shiro.ini configuration file:
 
 
@@ -467,9 +469,9 @@ jdbcRealm2.dataSource = $datasource2
 
 ```
 
-We defined two different datasource named: datasource1 and datasource2. 
-We defined two different jdbcRealm each one is a CustomJDBCRealm and has datasource1/2 as source.
-You can implement your own filter politics and create as many DataSource/Realms as you need.
+We defined two different datasource named: datasource1 and datasource2.   
+We defined two different jdbcRealm each one is a CustomJDBCRealm and has datasource1/2 as source.  
+You can implement your own filter politics and create as many DataSource/Realms as you need.  
 
 Last interesting thing is ShiroLoginBean.java. We fill our session with "username" and "tenant" parameter so we can correctly istantiate our backingBean (UserBean) at run time.
 
