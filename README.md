@@ -1,13 +1,14 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy in a tenant-schema pattern with a single DB.  
+Our first intention was to implement multi-tenancy associating for each tenant a different schema placed in a single DB.  
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create schemas.  
 We decided to manage one tenant per DB.  
-According to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
-> Hibernate do it so if you declare your databases it will work. However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
 
-We decided to manually create DB's and define them in config files.
+We faced another problem trying to dynamically create our DB's.
+According to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
+> However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
+We decided to manually create DB's before the deplyment and define them in our config files.
 
 
 **Pros:**
