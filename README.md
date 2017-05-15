@@ -102,7 +102,7 @@ ALTER TABLE public.roles_permissions
 INSERT INTO public.users(
 username, password, password_salt, tenant)
 VALUES ('user_1', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'tmp', 'tenant_a');
-
+`
 ```
 
 Just replace "tenant_a" with "tenant_b" when u insert users in different DBs.  
