@@ -1,7 +1,7 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy associating for each tenant a different DBschema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBSchema's in the same DB.  
+Our first intention was to implement multi-tenancy associating for each tenant a different DBschema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBschema's in same DB.  
 This method should have simplified our management protocol to generate different DBschemas per tenant allowing to manage all the features with a single connection.  
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create and manage DBschema's.  
 
