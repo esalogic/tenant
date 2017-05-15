@@ -1,12 +1,13 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy associating for each tenant a different DBSchema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBSchema's in the same DB.  
+Our first intention was to implement multi-tenancy associating for each tenant a different DBschema placed in a single DB: we wanted to access from a single DB-table, containing _<User,Password,Tenant>_, different DBSchema's in the same DB.  
+This method should have simplified our management protocol to generate different DBschemas per tenant allowing to manage all the features with a single connection.  
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create and manage DBschema's.  
-We decided to manage one tenant per DB where in each DB is placed a table containing _<User,Password,Tenant>_ association. We have statically istantiated n different realms (one per DB) so, when the user try a security Shiro access, he is connected to the right DB using that triple. 
-The system lookup in squence all the realms (all DB's) till he get's authenticated with the right one.  
 
-This system introduces some Pros & Cons vs. our first idea :
+We decided to manage one tenant per DB where each DB contains a table with _<User,Password,Tenant>_ association. We estabilish one different connection for each DB. To manage every interaction with DB's we implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html).
+
+**Tenant <-> DB pattern Pros & Cons:**
 
 **Pros:**
 * separate connections
@@ -445,6 +446,7 @@ private String[] getPasswordForUser(Connection conn, String username, String ten
 ```
 
 Now it remains to configure Shiro and implement a new login politics.  
+As you can notice, the system will try to compleate login procedure sequentially on each Realm. So it will return the right connection to the first DB that contains the triple <Username, Password, Tenant>.
 You can see how we configure Shiro by checking shiro.ini configuration file:
 
 
@@ -574,7 +576,7 @@ public void doLogin() {
 To run a valid test you need to:
 * execute tomee from terminal
 * export Project as WAR file placing it in the "webapps" folder
-* go to "localhost/TENANT_ROUTER_SHIRO" and test login feature
+* go to "localhost/TENANT_ROUTER_SHIRO" and test login featur
 
 
 ## Built With
@@ -589,9 +591,9 @@ To run a valid test you need to:
 
 ## Contributing
 
-This work is a mod of [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing) to fit with multi-tenant architecture.
+This work is an implementation of [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing) to fit with multi-tenant architecture.
 
 ## Authors
 
 * **Umberto Carrara** - [Esalogic](http://esalogic.it/)
-* **Vincenzo Ciaralli** - GhostWriter
+* **Vincenzo Ciaralli** - ghostwriter
