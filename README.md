@@ -116,14 +116,17 @@ First of all you need to modify web.xml and resources.xml to match your DB's con
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	id="WebApp_ID" version="3.1">
 	<display-name>TENANT_ROUTER</display-name>
+	
 	<welcome-file-list>
 		<welcome-file>login.xhtml</welcome-file>
 	</welcome-file-list>
+	
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.xhtml</url-pattern>
@@ -136,7 +139,6 @@ First of all you need to modify web.xml and resources.xml to match your DB's con
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
 	</filter>
-
 
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
@@ -154,6 +156,7 @@ First of all you need to modify web.xml and resources.xml to match your DB's con
 		<user>tenant</user>
 		<password>tenant</password>
 	</data-source>
+	
 	<data-source>
 		<name>java:app/tenant_a</name>
 		<class-name>org.postgresql.Driver</class-name>
@@ -200,7 +203,6 @@ First of all you need to modify web.xml and resources.xml to match your DB's con
 		maxOpenPreparedStatements=100
 	</Resource>
 
-
 	<Resource id="tenant_a" type="DataSource">
 		JdbcDriver =
 		org.postgresql.Driver
@@ -216,7 +218,6 @@ First of all you need to modify web.xml and resources.xml to match your DB's con
 		poolPreparedStatements=true
 		maxOpenPreparedStatements=100
 	</Resource>
-
 
 </resources>
 
@@ -469,7 +470,6 @@ ssl.enabled = false
 # Use default password matcher (SHA-256, 500000 hash iterations)
 credentialsMatcher = org.apache.shiro.authc.credential.HashedCredentialsMatcher
 credentialsMatcher.hashAlgorithmName = SHA-256
-
 
 # DataSource Setup
 datasource1 = org.apache.shiro.jndi.JndiObjectFactory
