@@ -18,7 +18,7 @@ We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dyn
 
 **Cons:**
 * static resource declaration
-* openJPA doesn't autonomously create DB-Table
+* openJPA doesn't autonomously create DB-table
 
 
 ## Getting Started
