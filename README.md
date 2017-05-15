@@ -29,7 +29,7 @@ To test the project you need:
 * [Apache My Faces](https://myfaces.apache.org/)
 * [OpenJPA](http://openjpa.apache.org/)
 * [apache-tomee-plus-7.0.2](http://openejb.apache.org/apache-tomee.html)
-* pgAdmin4 & [PostgreSQL](https://www.postgresql.org/)
+* [pgAdmin4] (https://www.pgadmin.org/) & [PostgreSQL](https://www.postgresql.org/)
 
 ### Installing
 
