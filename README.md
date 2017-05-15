@@ -7,7 +7,7 @@ We were not able to successfully introduce this pattern because openJPA doesn't 
 
 We decided to manage one tenant per DB where each DB contains a table with _<User,Password,Tenant>_ association. We estabilish one different connection per DB. To manage every interaction with DB's we implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html).
 
-**Tenant <-> DB pattern Pros & Cons:**
+**Tenant <-> DB pattern _Pros & Cons_:**
 
 **Pros:**
 * separate connections
