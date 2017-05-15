@@ -9,7 +9,7 @@ We decided to manage one tenant per DB where each DB contains a table with _<Use
 We estabilish one different connection per DB.  
 To manage every interaction with a specific DB we implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html). This solution has some benefits but forced us to declare all the components before starting the application.
 
-**Tenant <-> DB pattern _Pros & Cons_:**
+**Tenant per DB pattern _Pros & Cons_:**
 
 **Pros:**
 * separate connections
