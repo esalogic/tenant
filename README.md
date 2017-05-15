@@ -578,7 +578,7 @@ public void doLogin() {
 To run a valid test you need to:
 * execute tomee from terminal
 * export Project as WAR file placing it in the "webapps" folder
-* go to www.localhost:8080/TENANT_ROUTER_SHIRO and test login featur
+* go to "localhost:8080/TENANT_ROUTER_SHIRO" and test login featur
 
 
 ## Built With
