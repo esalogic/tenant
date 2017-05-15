@@ -1,16 +1,9 @@
 # Tenant
 
 Our goal is to implement multi-tenancy using **EJB + Shiro + JPA + PostgreSQL**.  
-Our first intention was to implement multi-tenancy associating for each tenant a different schema placed in a single DB.  
-We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create schemas.  
-We decided to manage one tenant per DB.  
-
-We faced another problem trying to dynamically create our DB's: 
-according to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
-> However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
-
-We decided to manually create DB's before the deplyment and define them in our config files.
-
+Our first intention was to implement multi-tenancy associating for each tenant a different DBSchema placed in a single DB: we wanted to create/access from a single DB table containing <User,Password,Tenant> differents DBSchema's. We wanted all of them to be contained in the same DB.  
+We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create DBschema's.  
+We decided to manage one tenant per DB where in each DB is plaed a table containing <User,Password,Tenant> association used to get the right access. When the user try to login we have istantiated n different realms, one per DB, so we can access the right one using our Triple
 
 **Pros:**
 * separate connections
@@ -225,7 +218,13 @@ First of all you need to modify web.xml and resources.xml to match your DBs conf
 ```
 As you can see we implemented our DataSource access as Routed_Datasource.  
 We istantiate one Router per tenant and dynamically match DataSource by name.  
-More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
+More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing).  
+
+We faced another problem trying to dynamically create our DB's: 
+according to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
+> However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
+
+We decided to manually create DB's before the deplyment and define them in our config files.
 
 **DeterminedRouter.java**
 ```
