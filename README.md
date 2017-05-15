@@ -166,6 +166,7 @@ First of all you need to modify web.xml and resources.xml to match your DBs conf
 </web-app>
 ```
 
+
 **resources.xml**
 ```
 <?xml version="1.0" encoding="UTF-8"?>
