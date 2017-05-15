@@ -205,36 +205,36 @@ As you can see we implemented our DataSource access as Routed_Datasource. We ist
 
 DeterminedRouter.java
 ```
-	/**
-	 * @return the user selected data source if it is set or the default one
-	 * @throws IllegalArgumentException
-	 *             if the data source is not found
-	 */
-	@Override
-	public DataSource getDataSource() {
+/**
+ * @return the user selected data source if it is set or the default one
+ * @throws IllegalArgumentException
+ *             if the data source is not found
+ */
+@Override
+public DataSource getDataSource() {
 
-		if (dataSources == null) {
-			logger.info("Lazy DataSource load!!");
-			init();
-		}
-
-		// if no datasource is selected use the default one
-		if (currentDataSource.get() == null) {
-			if (dataSources.containsKey(defaultDataSourceName)) {
-				return dataSources.get(defaultDataSourceName);
-
-			} else {
-				throw new IllegalArgumentException("you have to specify at least one datasource");
-			}
-		}
-
-		// the developper set the datasource to use
-		return currentDataSource.get();
+	if (dataSources == null) {
+		logger.info("Lazy DataSource load!!");
+		init();
 	}
+
+	// if no datasource is selected use the default one
+	if (currentDataSource.get() == null) {
+		if (dataSources.containsKey(defaultDataSourceName)) {
+			return dataSources.get(defaultDataSourceName);
+
+		} else {
+			throw new IllegalArgumentException("you have to specify at least one datasource");
+		}
+	}
+
+	// the developper set the datasource to use
+	return currentDataSource.get();
+}
 ```
 
-The core of our architecture is to give the chance to match users in different databases using Shiro security framework. To do this we needed to access with a Triple <Username, Password, Tenant_Name>. To do this we had to bypass custom Shiro's Realm-Token protocol to match our one.
-First of all we extended CustomAuthenticationToken to match our Triple: you can see the constructor. 
+The core of our architecture is to give the chance to match users in different databases using Shiro security framework. To do this we needed to access with a Triple <Username, Password, Tenant_Name> bypassing custom Shiro's Realm-Token protocol to fit our one.
+First of all we extended AuthenticationToken class to get Tenant_Name as parameter.
 
 CustomAuthenticationToken.java
 ```
@@ -258,52 +258,310 @@ public class CustomAuthenticationToken implements HostAuthenticationToken, Remem
 }
 ```
 
+After that we extended JDBCRealm class to permit to login with our Triple <Username, Password, Tenant>.
+We wanted to have DEFAULT query setted in the class. You can decide to write your own query in shiro.ini configuration file as jdbcRealm.authenticationQuery=YOUR_QUERY and jdbcRealm.userRolesQuery=YOUR_QUERY properties.
+These are our main modifications:
+
+CustomJDBCRealm.java
+
+```
+public class CustomJDBCRealm extends AuthorizingRealm {
+
+
+/**
+ * Rewrited to check <username, tenant> match
+ */
+protected static final String DEFAULT_AUTHENTICATION_QUERY = 
+	"select password from users where username = ? and tenant = 	?";
+
+/**
+ * Rewrited to check <username, tenant> match
+ */
+protected static final String DEFAULT_SALTED_AUTHENTICATION_QUERY = 
+	"select password, password_salt from users where username = ? and tenant = ?";
+
+...
+
+/**
+ * getPasswordForUser ( -, -, - ) now gets three parameter
+ */
+protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+
+	CustomAuthenticationToken upToken = (CustomAuthenticationToken) token;
+	String username = upToken.getUsername();
+	String password = upToken.getPassword().toString();
+	String tenant = upToken.getTenant();
+	// Null username is invalid
+	if (username == null) {
+		throw new AccountException("Null usernames are not allowed by this realm.");
+	}
+	if (tenant == null) {
+		throw new AccountException("Null tenants are not allowed by this realm.");
+	}
+
+	Connection conn = null;
+	SimpleAuthenticationInfo info = null;
+	try {
+		conn = dataSource.getConnection();
+
+		String salt = null;
+		switch (saltStyle) {
+		case NO_SALT:
+			password = getPasswordForUser(conn, username, tenant)[0];
+			break;
+		case CRYPT:
+			// TODO: separate password and hash from getPasswordForUser[0]
+			throw new ConfigurationException("Not implemented yet");
+			// break;
+		case COLUMN:
+			String[] queryResults = getPasswordForUser(conn, username, tenant);
+			password = queryResults[0];
+			salt = queryResults[1];
+			break;
+		case EXTERNAL:
+			password = getPasswordForUser(conn, username, tenant)[0];
+			salt = getSaltForUser(username);
+		}
+
+		if (password == null) {
+			throw new UnknownAccountException("No account found for user [" + username + "]");
+		}
+
+		info = new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
+
+		if (salt != null) {
+			info.setCredentialsSalt(ByteSource.Util.bytes(salt));
+		}
+
+	} catch (SQLException e) {
+		final String message = "There was a SQL error while authenticating user [" + username + "]";
+		if (log.isErrorEnabled()) {
+			log.error(message, e);
+		}
+
+		// Rethrow any SQL errors as an authentication exception
+		throw new AuthenticationException(message, e);
+	} finally {
+		JdbcUtils.closeConnection(conn);
+	}
+
+	return info;
+}
+
+/**
+ * 
+ * Modified to now get three parameter
+ * ps = conn.prepareStatement(authenticationQuery);
+ * ps.setString(1, username);
+ * ps.setString(2, tenant);
+ * 
+ * @param conn
+ * @param username
+ * @param tenant
+ * @return
+ * @throws SQLException
+ */
+private String[] getPasswordForUser(Connection conn, String username, String tenant) throws SQLException {
+
+	String[] result;
+	boolean returningSeparatedSalt = false;
+	switch (saltStyle) {
+	case NO_SALT:
+	case CRYPT:
+	case EXTERNAL:
+		result = new String[1];
+		break;
+	default:
+		result = new String[2];
+		returningSeparatedSalt = true;
+	}
+
+	PreparedStatement ps = null;
+	ResultSet rs = null;
+	try {
+		ps = conn.prepareStatement(authenticationQuery);
+		ps.setString(1, username);
+		ps.setString(2, tenant);
+
+		// Execute query
+		rs = ps.executeQuery();
+
+		// Loop over results - although we are only expecting one result,
+		// since usernames should be unique
+		boolean foundResult = false;
+		while (rs.next()) {
+
+			// Check to ensure only one row is processed
+			if (foundResult) {
+				throw new AuthenticationException(
+						"More than one user row found for user [" + username + "]. Usernames must be unique.");
+			}
+
+			result[0] = rs.getString(1);
+			if (returningSeparatedSalt) {
+				result[1] = rs.getString(2);
+			}
+
+			foundResult = true;
+		}
+	} finally {
+		JdbcUtils.closeResultSet(rs);
+		JdbcUtils.closeStatement(ps);
+	}
+
+	return result;
+}
+
+}
+
+
+```
+
+Now it remains to configure Shiro and implement a new login politics.
+You can see how we configure Shiro by checking shiro.ini configuration file:
+
+```
+[main]
+authc = org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter
+builtInCacheManager = org.apache.shiro.cache.MemoryConstrainedCacheManager
+securityManager.cacheManager = $builtInCacheManager
+
+
+authc.loginUrl = /login.xhtml
+authc.successUrl = /person.xhtml
+roles.unauthorizedUrl = /unauthorized.xhtml
+
+ssl.enabled = false
+
+# Use default password matcher (SHA-256, 500000 hash iterations)
+credentialsMatcher = org.apache.shiro.authc.credential.HashedCredentialsMatcher
+credentialsMatcher.hashAlgorithmName = SHA-256
+
+
+# DataSource Setup
+datasource1 = org.apache.shiro.jndi.JndiObjectFactory
+datasource1.resourceName = java:app/tenant_a
+
+datasource2 = org.apache.shiro.jndi.JndiObjectFactory
+datasource2.resourceName = java:app/tenant_b
+
+# JDBC Realm
+jdbcRealm1 = realm.CustomJDBCRealm
+jdbcRealm1.credentialsMatcher = $credentialsMatcher
+jdbcRealm1.dataSource = $datasource1
+
+jdbcRealm2 = realm.CustomJDBCRealm
+jdbcRealm2.credentialsMatcher = $credentialsMatcher
+jdbcRealm2.dataSource = $datasource2
+
+# Filter Setup
+[urls]
+/javax.faces.resource/** = anon
+/login.xhtml = authc
+/users.xhtml = authc, roles[admin]
+/index.html = authc, roles[user]
+
+```
+We defined two different datasource named: datasource1 and datasource2. 
+We defined two different jdbcRealm each one is a CustomJDBCRealm and has datasource1/2 as source.
+You can implement your own filter politics and create as many DataSource/Realms as you need.
+
+Last interesting thing is ShiroLoginBean.java. We fill our session with "username" and "tenant" parameter so we can correctly istantiate our backingBean (UserBean) at run time.
+
+ShiroLoginBean.java
+```
+
+...
+
+@ManagedBean
+@ViewScoped
+public class ShiroLoginBean implements Serializable {
+
+private static final long serialVersionUID = 2947777521214175822L;
+
+private static final Logger log = LoggerFactory.getLogger(ShiroLoginBean.class);
+
+private String username;
+private String tenant;
+private String password;
+private Boolean rememberMe;
+
+public ShiroLoginBean() {
+}
+
+@PostConstruct
+public void init() {
+}
+
+/**
+ * Now authenticate the User by <Username, Password, Tenant>. Shiro will automatically generate a new EntityManager with a specific connection for each tenant
+ */
+public void doLogin() {
+
+	Subject subject = SecurityUtils.getSubject();
+
+	CustomAuthenticationToken token = new CustomAuthenticationToken(getUsername(), getPassword().toCharArray(),
+			getRememberMe(), null, tenant);
+
+	try {
+
+		subject.login(token);
+
+		Session session = subject.getSession();
+		session.setAttribute("username", username);
+		session.setAttribute("tenant", tenant);
+
+		if (subject.hasRole("admin")) {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("users.xhtml");
+		} else {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
+		}
+
+	} catch (UnknownAccountException ex) {
+		facesError("Unknown account");
+		log.error(ex.getMessage(), ex);
+	} catch (IncorrectCredentialsException ex) {
+		facesError("Wrong password");
+		log.error(ex.getMessage(), ex);
+	} catch (LockedAccountException ex) {
+		facesError("Locked account");
+		log.error(ex.getMessage(), ex);
+	} catch (AuthenticationException | IOException ex) {
+		facesError("Unknown account: ");
+		log.error(ex.getMessage(), ex);
+	} finally {
+		token.clear();
+	}
+
+}
+
+...
+
+
+```
+
 ## Running the tests
+To run a valid test you need to:
+* execute tomee from terminal
+* export Project as WAR file placing it in the "webapps" folder
+* go to "localhost/TENANT_ROUTER_SHIRO" and test login feature
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Apache My Faces](https://myfaces.apache.org/)
+* [OpenJPA](http://openjpa.apache.org/)
+* [TomEE](http://openejb.apache.org/apache-tomee.html)
+* [PostgreSQL](https://www.postgresql.org/)
+* Dynamic Data Source
+* [Eclipse Neon](http://www.eclipse.org/neon/)
+
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+This work is a mod of [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing) to fit with multi-tenant architecture.
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* **Umberto Carrara** - *Initial work* - [Esalogic](http://esalogic.it/)
+* **Vincenzo Ciaralli**
