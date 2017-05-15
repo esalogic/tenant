@@ -103,10 +103,10 @@ VALUES ('user_1', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df
 `
 ```
 
-Just replace "tenant_a" with "tenant_b" when u insert users in different DBs.  
+Just replace "tenant_a" with "tenant_b" when u insert users in different DB's.  
 
-Now that you have configured two differents DBs you need to modify configuration files.  
-First of all you need to modify web.xml and resources.xml to match your DBs configuration (check your postgreSQL port). 
+Now that you have configured two differents DB's you need to modify configuration files.  
+First of all you need to modify web.xml and resources.xml to match your DB's configuration (check your postgreSQL port). 
 
 **web.xml**
 ```
