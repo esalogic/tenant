@@ -24,7 +24,7 @@ We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dyn
 ## Getting Started
 
 To test the project you need:
-* [Java JDK and Java JRE] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Java JDK and Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * [Eclipse Neon](http://www.eclipse.org/neon/)
 * [Apache My Faces](https://myfaces.apache.org/)
 * [OpenJPA](http://openjpa.apache.org/)
