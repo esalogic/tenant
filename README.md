@@ -586,7 +586,7 @@ To run a valid test you need to:
 * [OpenJPA](http://openjpa.apache.org/)
 * [TomEE](http://openejb.apache.org/apache-tomee.html)
 * [PostgreSQL](https://www.postgresql.org/)
-* Dynamic Data Source
+* [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing)
 * [Eclipse Neon](http://www.eclipse.org/neon/)
 
 
