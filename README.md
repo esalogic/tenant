@@ -18,8 +18,7 @@ We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dyn
 
 **Cons:**
 * static resource declaration
-* openJPA doesn't accept our object model
-* BootStrapUtility is not working in our environment, we should statically declare all persistence info
+* openJPA doesn't autonomously create DB-Table
 
 
 ## Getting Started
