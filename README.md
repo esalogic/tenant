@@ -24,13 +24,12 @@ We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dyn
 ## Getting Started
 
 To test the project you need:
-* Java JDK
-* Java JRE
-* Eclipse Neon
-* Apache MyFaces
-* OpenJPA
-* apache-tomee-plus-7.0.2
-* pgAdmin4 & PostgreSQL
+* [Java JDK and Java JRE] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Eclipse Neon](http://www.eclipse.org/neon/)
+* [Apache My Faces](https://myfaces.apache.org/)
+* [OpenJPA](http://openjpa.apache.org/)
+* [apache-tomee-plus-7.0.2](http://openejb.apache.org/apache-tomee.html)
+* pgAdmin4 & [PostgreSQL](https://www.postgresql.org/)
 
 ### Installing
 
