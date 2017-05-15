@@ -597,5 +597,5 @@ This work is an implementation of [Dynamic DataSource Routing](https://github.co
 
 ## Authors
 
-* **Umberto Carrara** - [Esalogic](http://esalogic.it/)
-* **Vincenzo Ciaralli** - ghostwriter
+* **Umberto Carrara** - [Esalogic](http://esalogic.it/) - developer
+* **Vincenzo Ciaralli** - [Esalogic](http://esalogic.it/) - ghostwriter
