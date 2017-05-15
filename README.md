@@ -6,7 +6,7 @@ This method should have simplified our management protocol to generate different
 We were not able to successfully introduce this pattern because openJPA doesn't easily permit to dynamically create and manage DBschema's.  
 
 We decided to manage one tenant per DB where each DB contains a table with _<User,Password,Tenant>_ association.  
-We estabilish one different connection per DB.  
+We establish one different connection per DB.  
 We implemented [Dynamic datasource routing](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) to manage every interaction with a specific DB. This solution has some benefits but forced us to know and declare all the components we need to use before starting the application.
 
 **Tenant per DB pattern _Pros & Cons_:**
@@ -37,7 +37,7 @@ To test the project you need:
 Open Eclipse and set apache-tomee-plus-7.0.2 as Tomacat v8.5 Server in Project->Properties->Server option.  
 Create a new Dynamic Web Project and replace "src" folder in Java Resources and "WebContent" folder in root directory with tenant's one.  
 First thing you need to do is to configure your environement (JAVA JDK,JRE and Eclipse).  
-Afther that, you have to open pgAdmin and create two new DB called: tenant_a, tenant_b.  
+After that, you have to open pgAdmin and create two new DB called: tenant_a, tenant_b.  
 For each of them execute queries contained in query.sql placed in JavaResources->src->resources.  
 You can insert as many users as you want to test our features.
 
@@ -222,14 +222,14 @@ First of all you need to modify web.xml and resources.xml to match your DBs conf
 
 ```
 As you can see we implemented our DataSource access as Routed_Datasource.  
-We istantiate one Router per tenant and dynamically match DataSource by name.  
+We instantiate one Router per tenant and dynamically match DataSource by name.  
 More details in [Dynamic DataSource Routing](https://github.com/apache/tomee/tree/master/examples/dynamic-datasource-routing).  
 
 We faced another problem trying to dynamically create our DB's: 
 according to [TomEE](http://tomee.apache.org/examples/dynamic-datasource-routing/README.html) documentation:
 > However with OpenJPA (the default JPA provider for OpenEJB), the creation is lazy and it happens only once so when you'll switch of database it will no more work.
 
-We decided to manually create DB's before the deplyment and define them in our config files.
+We decided to manually create DB's before the deployment and define them in our config files.
 
 **DeterminedRouter.java**
 ```
@@ -447,7 +447,7 @@ private String[] getPasswordForUser(Connection conn, String username, String ten
 ```
 
 Now it remains to configure Shiro and implement a new login politics.  
-As you can notice, the system will try to compleate login procedure sequentially on each Realm. So it will return the right connection to the first DB that contains the triple <Username, Password, Tenant>.
+As you can notice, the system will try to complete login procedure sequentially on each Realm. So it will return the right connection to the first DB that contains the triple <Username, Password, Tenant>.
 You can see how we configure Shiro by checking shiro.ini configuration file:
 
 
@@ -499,7 +499,7 @@ We defined two different datasource named: datasource1 and datasource2.
 We defined two different jdbcRealm each one is a CustomJDBCRealm and has datasource1/2 as source.  
 You can implement your own filter politics and create as many DataSource/Realms as you need.  
 
-Last interesting thing is ShiroLoginBean.java. We fill our session with "username" and "tenant" parameter so we can correctly istantiate our backingBean (UserBean) at run time.
+Last interesting thing is ShiroLoginBean.java. We fill our session with "username" and "tenant" parameter so we can correctly instantiate our backingBean (UserBean) at run time.
 
 **ShiroLoginBean.java**
 ```
