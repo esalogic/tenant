@@ -449,7 +449,7 @@ private String[] getPasswordForUser(Connection conn, String username, String ten
 ```
 
 Now it remains to configure Shiro and implement a new login politics.  
-As you can notice, the system will try to complete login procedure sequentially on each Realm. So it will return the right connection to the first DB that contains the triple <Username, Password, Tenant>.
+As you can notice, the system will try to complete login procedure sequentially on each Realm. So it will return the right connection to the first DB that contains the triple <Username, Password, Tenant> ( is possible to have same username and password in different db but tenant_name should be different to ensure distinctivenes ).
 You can see how we configure Shiro by checking shiro.ini configuration file:
 
 
