@@ -262,7 +262,7 @@ public DataSource getDataSource() {
 }
 ```
 
-The core of our architecture is to give the chance to match users in different databases using Shiro security framework and JPA in EJB context. To do this we needed to access with a Triple <Username, Password, Tenant_Name> bypassing custom Shiro's Realm-Token protocol to fit our one.  
+The core of our architecture is to give the chance to match users in different databases using Shiro security framework and JPA in EJB context. To do this we needed to access with a Triple <Username, Password, Tenant_Name> bypassing standard Shiro's Realm-Token protocol to fit our one.  
 First of all we extended AuthenticationToken class to get Tenant_Name as parameter.
 
 **CustomAuthenticationToken.java**
